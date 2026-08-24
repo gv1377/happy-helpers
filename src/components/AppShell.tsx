@@ -12,6 +12,7 @@ import {
   Plane,
   Plus,
   Shirt,
+  ShieldCheck,
   Sparkles,
   Sun,
   UserRound,
@@ -118,6 +119,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Plane size={19} /> Viagens
           </Link>
+          {profile?.role === "superadmin" && (
+            <Link to="/admin" className={`nav-button ${pathname === "/admin" ? "is-active" : ""}`}>
+              <ShieldCheck size={19} /> Administração
+            </Link>
+          )}
         </nav>
         <div className="sidebar-bottom">
           <Link to="/perfil" className="mini-profile">

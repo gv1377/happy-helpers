@@ -6,6 +6,38 @@
   color: #292721;
   background: #f8f7f3;
 }
+.admin-users {
+  display: grid;
+  gap: 10px;
+}
+.admin-users article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 18px;
+  background: #fffdf9;
+  border: 1px solid #e5dfd5;
+  border-radius: 12px;
+}
+.admin-users b,
+.admin-users span {
+  display: block;
+}
+.admin-users span {
+  font: 9px "DM Mono";
+  color: #948d82;
+  margin-top: 4px;
+}
+.admin-users select {
+  padding: 9px;
+  border: 1px solid #d7d0c6;
+  border-radius: 8px;
+  background: transparent;
+}
+.dark .admin-users article {
+  background: #282722;
+  border-color: #403e37;
+}
 * {
   box-sizing: border-box;
 }
