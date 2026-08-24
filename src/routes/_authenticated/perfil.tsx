@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
@@ -55,6 +55,38 @@ function Page() {
           Salvar alterações
         </button>
       </section>
+      <section className="section-head">
+        <div>
+          <p className="eyebrow">ORGANIZAR</p>
+          <h2>Planejamento</h2>
+        </div>
+      </section>
+      <div className="module-grid">
+        <Link className="module-card" to="/wishlist">
+          <div>
+            <h3>Lista de desejos</h3>
+            <p>Planeje suas próximas compras.</p>
+          </div>
+        </Link>
+        <Link className="module-card" to="/colecoes">
+          <div>
+            <h3>Coleções</h3>
+            <p>Agrupe peças por ocasião.</p>
+          </div>
+        </Link>
+        <Link className="module-card" to="/eventos">
+          <div>
+            <h3>Eventos</h3>
+            <p>Planeje o que vestir.</p>
+          </div>
+        </Link>
+        <Link className="module-card" to="/viagens">
+          <div>
+            <h3>Viagens</h3>
+            <p>Organize sua mala.</p>
+          </div>
+        </Link>
+      </div>
     </AppShell>
   );
 }

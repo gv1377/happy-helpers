@@ -1,0 +1,17 @@
+{
+  "name": "Fiorella — Your Intelligent Closet",
+  "short_name": "Fiorella",
+  "description": "Seu guarda-roupa inteligente.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f7f3",
+  "theme_color": "#302f2a",
+  "icons": [
+    {
+      "src": "/fiorella-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

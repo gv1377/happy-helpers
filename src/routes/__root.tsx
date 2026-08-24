@@ -94,6 +94,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/fiorella-icon.svg" },
     ],
   }),
   shellComponent: RootShell,
@@ -110,10 +112,18 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <PwaRegistration />
         <Scripts />
       </body>
     </html>
   );
+}
+
+function PwaRegistration() {
+  useEffect(() => {
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
+  }, []);
+  return null;
 }
 
 function RootComponent() {

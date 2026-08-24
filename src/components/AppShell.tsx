@@ -4,14 +4,19 @@ import {
   Bell,
   CalendarDays,
   ChevronRight,
+  FolderHeart,
+  Heart,
   Home,
   LogOut,
+  Moon,
+  Plane,
   Plus,
   Shirt,
   Sparkles,
+  Sun,
   UserRound,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/lib/closet";
@@ -30,6 +35,20 @@ export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    const enabled = localStorage.getItem("fiorella-theme") === "dark";
+    setDark(enabled);
+    document.documentElement.classList.toggle("dark", enabled);
+  }, []);
+
+  function toggleTheme() {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("fiorella-theme", next ? "dark" : "light");
+  }
 
   const name = profile?.display_name || profile?.full_name || user?.email || "Você";
   const initial = name.charAt(0).toUpperCase();
@@ -74,6 +93,31 @@ export function AppShell({ children }: { children: ReactNode }) {
             <CalendarDays size={19} />
             Calendário
           </Link>
+          <p className="nav-section">ORGANIZAR</p>
+          <Link
+            to="/wishlist"
+            className={`nav-button ${pathname === "/wishlist" ? "is-active" : ""}`}
+          >
+            <Heart size={19} /> Desejos
+          </Link>
+          <Link
+            to="/colecoes"
+            className={`nav-button ${pathname === "/colecoes" ? "is-active" : ""}`}
+          >
+            <FolderHeart size={19} /> Coleções
+          </Link>
+          <Link
+            to="/eventos"
+            className={`nav-button ${pathname === "/eventos" ? "is-active" : ""}`}
+          >
+            <CalendarDays size={19} /> Eventos
+          </Link>
+          <Link
+            to="/viagens"
+            className={`nav-button ${pathname === "/viagens" ? "is-active" : ""}`}
+          >
+            <Plane size={19} /> Viagens
+          </Link>
         </nav>
         <div className="sidebar-bottom">
           <Link to="/perfil" className="mini-profile">
@@ -97,6 +141,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
           <div className="date">{today}</div>
           <div className="top-actions">
+            <button
+              aria-label={dark ? "Usar modo claro" : "Usar modo escuro"}
+              onClick={toggleTheme}
+              type="button"
+            >
+              {dark ? <Sun size={19} /> : <Moon size={19} />}
+            </button>
             <button aria-label="Notificações" type="button">
               <Bell size={19} />
             </button>

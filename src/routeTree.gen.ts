@@ -15,11 +15,15 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedCalendarioRouteImport } from './routes/_authenticated/calendario'
 import { Route as AuthenticatedClosetRouteImport } from './routes/_authenticated/closet'
+import { Route as AuthenticatedColecoesRouteImport } from './routes/_authenticated/colecoes'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedEventosRouteImport } from './routes/_authenticated/eventos'
 import { Route as AuthenticatedIaRouteImport } from './routes/_authenticated/ia'
 import { Route as AuthenticatedLooksRouteImport } from './routes/_authenticated/looks'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
+import { Route as AuthenticatedViagensRouteImport } from './routes/_authenticated/viagens'
+import { Route as AuthenticatedWishlistRouteImport } from './routes/_authenticated/wishlist'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -50,9 +54,19 @@ const AuthenticatedClosetRoute = AuthenticatedClosetRouteImport.update({
   path: '/closet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedColecoesRoute = AuthenticatedColecoesRouteImport.update({
+  id: '/colecoes',
+  path: '/colecoes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEventosRoute = AuthenticatedEventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedIaRoute = AuthenticatedIaRouteImport.update({
@@ -75,6 +89,16 @@ const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedViagensRoute = AuthenticatedViagensRouteImport.update({
+  id: '/viagens',
+  path: '/viagens',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedWishlistRoute = AuthenticatedWishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -82,11 +106,15 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/calendario': typeof AuthenticatedCalendarioRoute
   '/closet': typeof AuthenticatedClosetRoute
+  '/colecoes': typeof AuthenticatedColecoesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/eventos': typeof AuthenticatedEventosRoute
   '/ia': typeof AuthenticatedIaRoute
   '/looks': typeof AuthenticatedLooksRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/viagens': typeof AuthenticatedViagensRoute
+  '/wishlist': typeof AuthenticatedWishlistRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,11 +122,15 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/calendario': typeof AuthenticatedCalendarioRoute
   '/closet': typeof AuthenticatedClosetRoute
+  '/colecoes': typeof AuthenticatedColecoesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/eventos': typeof AuthenticatedEventosRoute
   '/ia': typeof AuthenticatedIaRoute
   '/looks': typeof AuthenticatedLooksRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/viagens': typeof AuthenticatedViagensRoute
+  '/wishlist': typeof AuthenticatedWishlistRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -108,11 +140,15 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/calendario': typeof AuthenticatedCalendarioRoute
   '/_authenticated/closet': typeof AuthenticatedClosetRoute
+  '/_authenticated/colecoes': typeof AuthenticatedColecoesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/eventos': typeof AuthenticatedEventosRoute
   '/_authenticated/ia': typeof AuthenticatedIaRoute
   '/_authenticated/looks': typeof AuthenticatedLooksRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/viagens': typeof AuthenticatedViagensRoute
+  '/_authenticated/wishlist': typeof AuthenticatedWishlistRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -122,11 +158,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/calendario'
     | '/closet'
+    | '/colecoes'
     | '/dashboard'
+    | '/eventos'
     | '/ia'
     | '/looks'
     | '/onboarding'
     | '/perfil'
+    | '/viagens'
+    | '/wishlist'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -134,11 +174,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/calendario'
     | '/closet'
+    | '/colecoes'
     | '/dashboard'
+    | '/eventos'
     | '/ia'
     | '/looks'
     | '/onboarding'
     | '/perfil'
+    | '/viagens'
+    | '/wishlist'
   id:
     | '__root__'
     | '/'
@@ -147,11 +191,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/_authenticated/calendario'
     | '/_authenticated/closet'
+    | '/_authenticated/colecoes'
     | '/_authenticated/dashboard'
+    | '/_authenticated/eventos'
     | '/_authenticated/ia'
     | '/_authenticated/looks'
     | '/_authenticated/onboarding'
     | '/_authenticated/perfil'
+    | '/_authenticated/viagens'
+    | '/_authenticated/wishlist'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -205,11 +253,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClosetRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/colecoes': {
+      id: '/_authenticated/colecoes'
+      path: '/colecoes'
+      fullPath: '/colecoes'
+      preLoaderRoute: typeof AuthenticatedColecoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/eventos': {
+      id: '/_authenticated/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof AuthenticatedEventosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/ia': {
@@ -240,27 +302,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPerfilRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/viagens': {
+      id: '/_authenticated/viagens'
+      path: '/viagens'
+      fullPath: '/viagens'
+      preLoaderRoute: typeof AuthenticatedViagensRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/wishlist': {
+      id: '/_authenticated/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof AuthenticatedWishlistRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCalendarioRoute: typeof AuthenticatedCalendarioRoute
   AuthenticatedClosetRoute: typeof AuthenticatedClosetRoute
+  AuthenticatedColecoesRoute: typeof AuthenticatedColecoesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedEventosRoute: typeof AuthenticatedEventosRoute
   AuthenticatedIaRoute: typeof AuthenticatedIaRoute
   AuthenticatedLooksRoute: typeof AuthenticatedLooksRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedViagensRoute: typeof AuthenticatedViagensRoute
+  AuthenticatedWishlistRoute: typeof AuthenticatedWishlistRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCalendarioRoute: AuthenticatedCalendarioRoute,
   AuthenticatedClosetRoute: AuthenticatedClosetRoute,
+  AuthenticatedColecoesRoute: AuthenticatedColecoesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedEventosRoute: AuthenticatedEventosRoute,
   AuthenticatedIaRoute: AuthenticatedIaRoute,
   AuthenticatedLooksRoute: AuthenticatedLooksRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedViagensRoute: AuthenticatedViagensRoute,
+  AuthenticatedWishlistRoute: AuthenticatedWishlistRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -756,6 +756,104 @@ button {
     right: -2%;
   }
 }
+.nav-section {
+  font: 9px "DM Mono";
+  letter-spacing: 1.1px;
+  color: #9b9388;
+  margin: 16px 13px 2px;
+}
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.module-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px;
+  background: #fffdf9;
+  border: 1px solid #e5dfd5;
+  border-radius: 13px;
+}
+.module-card h3 {
+  margin: 0 0 5px;
+  font: 500 18px "Playfair Display";
+}
+.module-card p {
+  margin: 0;
+  color: #898176;
+  font-size: 12px;
+}
+.module-card > button {
+  color: #9a665d;
+}
+.dark body,
+.dark .fiorella-app {
+  background: #1d1c19;
+  color: #f1eee8;
+}
+.dark .sidebar {
+  background: #24231f;
+  border-color: #3a3832;
+}
+.dark .content {
+  background: #1d1c19;
+}
+.dark .topbar,
+.dark .bottom-nav {
+  border-color: #3a3832;
+}
+.dark .bottom-nav,
+.dark .look-card,
+.dark .piece-card,
+.dark .closet-piece,
+.dark .module-card,
+.dark .profile-card,
+.dark .look-builder,
+.dark .outfit-card,
+.dark .search-box,
+.dark .auth-card,
+.dark .onboarding-page section {
+  background: #282722;
+  border-color: #403e37;
+}
+.dark .nav-button:hover,
+.dark .nav-button.is-active {
+  background: #38362f;
+  color: #fff;
+}
+.dark .muted,
+.dark .piece-card p,
+.dark .module-card p {
+  color: #aaa398;
+}
+.dark input,
+.dark select,
+.dark textarea,
+.dark .field input,
+.dark .field select,
+.dark .field textarea {
+  background: #22211e;
+  color: #eeeae2;
+  border-color: #49463e;
+}
+.dark .empty-state {
+  background: #24231f;
+  border-color: #49463e;
+}
+.dark .closet-summary {
+  background: #2b2924;
+}
+.dark .secondary {
+  border-color: #4c4941;
+  color: #ddd7ce;
+}
+@media (max-width: 800px) {
+  .module-grid {
+    grid-template-columns: 1fr;
+  }
+}
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
