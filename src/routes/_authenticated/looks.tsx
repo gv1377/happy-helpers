@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Heart, Plus } from "lucide-react";
+import { Download, Heart, Plus, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell, EmptyState } from "@/components/AppShell";
 import { SignedImage } from "@/components/SignedImage";
 import { useAuth } from "@/hooks/useAuth";
 import { useClothingItems, useCreateOutfit, useOutfits } from "@/lib/closet";
+import { createOutfitCard, downloadBlob, safeLookFilename } from "@/lib/outfit-sharing";
 export const Route = createFileRoute("/_authenticated/looks")({ component: Looks });
 function Looks() {
   const { user } = useAuth();
@@ -14,6 +15,30 @@ function Looks() {
   const create = useCreateOutfit(user?.id);
   const [selected, setSelected] = useState<string[]>([]);
   const [name, setName] = useState("");
+  const [sharingId, setSharingId] = useState<string>();
+  const exportLook = async (look: (typeof looks)[number], share: boolean) => {
+    setSharingId(look.id);
+    try {
+      const blob = await createOutfitCard(look);
+      const filename = safeLookFilename(look.name);
+      const file = new File([blob], filename, { type: "image/png" });
+      if (share && navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          title: look.name,
+          text: "Meu look no Fiorella Closet AI",
+          files: [file],
+        });
+      } else {
+        downloadBlob(blob, filename);
+        toast.success(share ? "Compartilhamento indisponível: imagem salva." : "Imagem salva.");
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      toast.error(error instanceof Error ? error.message : "Erro ao criar imagem");
+    } finally {
+      setSharingId(undefined);
+    }
+  };
   const save = async () => {
     try {
       await create.mutateAsync({ name: name || "Meu look", itemIds: selected });
@@ -96,7 +121,23 @@ function Looks() {
               <p>
                 {l.items.length} peças · {l.usage_count} usos
               </p>
-              <Heart size={17} fill={l.is_favorite ? "currentColor" : "none"} />
+              <div className="outfit-actions">
+                <Heart size={17} fill={l.is_favorite ? "currentColor" : "none"} />
+                <button
+                  disabled={sharingId === l.id}
+                  onClick={() => exportLook(l, false)}
+                  aria-label="Salvar look como imagem"
+                >
+                  <Download size={16} />
+                </button>
+                <button
+                  disabled={sharingId === l.id}
+                  onClick={() => exportLook(l, true)}
+                  aria-label="Compartilhar look"
+                >
+                  <Share2 size={16} />
+                </button>
+              </div>
             </article>
           ))}
         </div>

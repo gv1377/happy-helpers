@@ -1,10 +1,15 @@
-const CACHE = "fiorella-v1";
+const CACHE = "fiorella-v2";
+const PRECACHE = [
+  "/",
+  "/offline.html",
+  "/manifest.webmanifest",
+  "/icon-192.png",
+  "/icon-512.png",
+  "/icon-maskable-512.png",
+  "/apple-touch-icon.png",
+];
 self.addEventListener("install", (event) =>
-  event.waitUntil(
-    caches
-      .open(CACHE)
-      .then((cache) => cache.addAll(["/", "/manifest.webmanifest", "/fiorella-icon.svg"])),
-  ),
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(PRECACHE))),
 );
 self.addEventListener("activate", (event) =>
   event.waitUntil(
@@ -25,6 +30,10 @@ self.addEventListener("fetch", (event) => {
         caches.open(CACHE).then((cache) => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request)),
+      .catch(
+        async () =>
+          (await caches.match(event.request)) ??
+          (event.request.mode === "navigate" ? caches.match("/offline.html") : undefined),
+      ),
   );
 });
