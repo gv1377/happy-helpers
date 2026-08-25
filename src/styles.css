@@ -1110,17 +1110,71 @@ button {
   border-radius: 13px;
 }
 .outfit-images {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 180px;
+  position: relative;
+  height: 300px;
   overflow: hidden;
   border-radius: 9px;
+  background: #f8f5ef;
 }
-.outfit-images img,
-.outfit-images .image-placeholder {
+.outfit-piece {
+  position: absolute;
+  display: grid;
+  place-items: center;
+}
+.outfit-piece img,
+.outfit-piece .image-placeholder {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+}
+.slot-top {
+  left: 25%;
+  top: 4%;
+  width: 50%;
+  height: 40%;
+  z-index: 3;
+}
+.slot-bottom {
+  left: 25%;
+  top: 39%;
+  width: 50%;
+  height: 48%;
+  z-index: 2;
+}
+.slot-dress {
+  left: 22%;
+  top: 5%;
+  width: 56%;
+  height: 78%;
+  z-index: 2;
+}
+.slot-outerwear {
+  left: 18%;
+  top: 2%;
+  width: 64%;
+  height: 55%;
+  z-index: 4;
+}
+.slot-shoes {
+  left: 32%;
+  bottom: 1%;
+  width: 36%;
+  height: 18%;
+  z-index: 5;
+}
+.slot-accessory {
+  right: 2%;
+  top: 16%;
+  width: 23%;
+  height: 24%;
+  z-index: 6;
+}
+.slot-accessory.slot-index-1,
+.slot-accessory.slot-index-3,
+.slot-accessory.slot-index-5 {
+  left: 2%;
+  right: auto;
+  top: 28%;
 }
 .outfit-card h3 {
   margin: 10px 0 3px;

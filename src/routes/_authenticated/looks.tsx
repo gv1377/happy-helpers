@@ -7,6 +7,7 @@ import { SignedImage } from "@/components/SignedImage";
 import { useAuth } from "@/hooks/useAuth";
 import { useClothingItems, useCreateOutfit, useOutfits } from "@/lib/closet";
 import { createOutfitCard, downloadBlob, safeLookFilename } from "@/lib/outfit-sharing";
+import { getOutfitSlot } from "@/lib/outfit-layout";
 export const Route = createFileRoute("/_authenticated/looks")({ component: Looks });
 function Looks() {
   const { user } = useAuth();
@@ -113,8 +114,13 @@ function Looks() {
           {looks.map((l) => (
             <article className="outfit-card" key={l.id}>
               <div className="outfit-images">
-                {l.items.slice(0, 4).map((i) => (
-                  <SignedImage key={i.id} bucket="clothing" path={i.image_url} alt={i.name} />
+                {l.items.slice(0, 6).map((i, index) => (
+                  <div
+                    className={`outfit-piece slot-${getOutfitSlot(i.category)} slot-index-${index}`}
+                    key={i.id}
+                  >
+                    <SignedImage bucket="clothing" path={i.image_url} alt={i.name} />
+                  </div>
                 ))}
               </div>
               <h3>{l.name}</h3>

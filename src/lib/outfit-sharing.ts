@@ -1,5 +1,6 @@
 import type { Outfit } from "@/lib/closet";
 import { createSignedUrl } from "@/lib/storage";
+import { getOutfitSlot, type OutfitSlot } from "@/lib/outfit-layout";
 
 export function safeLookFilename(name: string) {
   const clean = name
@@ -21,7 +22,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-function drawCover(
+function drawContain(
   ctx: CanvasRenderingContext2D,
   image: HTMLImageElement,
   x: number,
@@ -29,33 +30,34 @@ function drawCover(
   width: number,
   height: number,
 ) {
-  const scale = Math.max(width / image.width, height / image.height);
-  const sourceWidth = width / scale;
-  const sourceHeight = height / scale;
+  const scale = Math.min(width / image.width, height / image.height);
+  const drawWidth = image.width * scale;
+  const drawHeight = image.height * scale;
   ctx.drawImage(
     image,
-    (image.width - sourceWidth) / 2,
-    (image.height - sourceHeight) / 2,
-    sourceWidth,
-    sourceHeight,
-    x,
-    y,
-    width,
-    height,
+    x + (width - drawWidth) / 2,
+    y + (height - drawHeight) / 2,
+    drawWidth,
+    drawHeight,
   );
 }
 
 export async function createOutfitCard(
-  outfit: Outfit & { items: Array<{ image_url: string | null }> },
+  outfit: Outfit & { items: Array<{ image_url: string | null; category: string }> },
 ) {
-  const urls = (
+  const sources = (
     await Promise.all(
-      outfit.items
-        .slice(0, 6)
-        .map((item) => (item.image_url ? createSignedUrl("clothing", item.image_url) : null)),
+      outfit.items.slice(0, 6).map(async (item) => ({
+        item,
+        url: item.image_url ? await createSignedUrl("clothing", item.image_url) : null,
+      })),
     )
-  ).filter((url): url is string => Boolean(url));
-  const images = await Promise.all(urls.map(loadImage));
+  ).filter((source): source is { item: (typeof outfit.items)[number]; url: string } =>
+    Boolean(source.url),
+  );
+  const images = await Promise.all(
+    sources.map(async (source) => ({ ...source, image: await loadImage(source.url) })),
+  );
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
   canvas.height = 1350;
@@ -69,23 +71,36 @@ export async function createOutfitCard(
   ctx.fillText("FIORELLA", 540, 78);
   ctx.font = "62px Georgia";
   ctx.fillText(outfit.name, 540, 155);
-  const columns = 2;
-  const gap = 22;
-  const margin = 70;
-  const top = 205;
-  const cellWidth = (canvas.width - margin * 2 - gap) / columns;
-  const rows = Math.max(1, Math.ceil(images.length / columns));
-  const cellHeight = Math.min(330, (1050 - gap * (rows - 1)) / rows);
-  images.forEach((image, index) =>
-    drawCover(
-      ctx,
-      image,
-      margin + (index % columns) * (cellWidth + gap),
-      top + Math.floor(index / columns) * (cellHeight + gap),
-      cellWidth,
-      cellHeight,
-    ),
-  );
+  const slots: Record<OutfitSlot, [number, number, number, number]> = {
+    top: [270, 205, 540, 420],
+    bottom: [270, 545, 540, 570],
+    dress: [250, 215, 580, 880],
+    outerwear: [225, 185, 630, 610],
+    shoes: [330, 1060, 420, 165],
+    accessory: [800, 310, 210, 230],
+  };
+  const order: OutfitSlot[] = ["dress", "bottom", "top", "outerwear", "shoes", "accessory"];
+  const counts = new Map<OutfitSlot, number>();
+  images
+    .sort(
+      (a, b) =>
+        order.indexOf(getOutfitSlot(a.item.category)) -
+        order.indexOf(getOutfitSlot(b.item.category)),
+    )
+    .forEach(({ image, item }) => {
+      const slot = getOutfitSlot(item.category);
+      const count = counts.get(slot) ?? 0;
+      counts.set(slot, count + 1);
+      const [x, y, width, height] = slots[slot];
+      drawContain(
+        ctx,
+        image,
+        slot === "accessory" && count % 2 ? 70 : x,
+        y + Math.floor(count / 2) * 245,
+        width,
+        height,
+      );
+    });
   ctx.font = "26px system-ui";
   ctx.fillStyle = "#777066";
   ctx.fillText("Criado no Fiorella Closet AI", 540, 1310);
