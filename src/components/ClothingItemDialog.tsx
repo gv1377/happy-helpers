@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,6 +11,7 @@ import {
   type ClothingItem,
 } from "@/lib/closet";
 import { useSignedUrl } from "@/components/SignedImage";
+import { removeLightBackground } from "@/lib/image-background";
 
 export function ClothingItemDialog({
   item,
@@ -21,8 +22,11 @@ export function ClothingItemDialog({
 }) {
   const { user } = useAuth();
   const save = useSaveClothingItem(user?.id);
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
+  const [processedFile, setProcessedFile] = useState<File | null>(null);
+  const [removeBackground, setRemoveBackground] = useState(true);
+  const [processing, setProcessing] = useState(false);
+  const [processingError, setProcessingError] = useState<string>();
   const { data: existingUrl } = useSignedUrl(BUCKETS.clothing, item?.image_url);
   const [saving, setSaving] = useState(false);
 
@@ -38,7 +42,15 @@ export function ClothingItemDialog({
     setSaving(true);
     try {
       let imagePath = item?.image_url ?? null;
-      if (file) imagePath = await uploadUserFile(BUCKETS.clothing, user.id, file);
+      let originalPath = item?.original_image_url ?? null;
+      if (originalFile) {
+        originalPath = await uploadUserFile(BUCKETS.originals, user.id, originalFile);
+        imagePath = await uploadUserFile(
+          BUCKETS.clothing,
+          user.id,
+          removeBackground && processedFile ? processedFile : originalFile,
+        );
+      }
 
       const priceRaw = String(form.get("price") ?? "").trim();
       await save.mutateAsync({
@@ -55,6 +67,7 @@ export function ClothingItemDialog({
           notes: emptyToNull(form.get("notes")),
           price: priceRaw ? Number(priceRaw.replace(",", ".")) : null,
           image_url: imagePath,
+          original_image_url: originalPath,
         },
       });
       toast.success(item ? "Peça atualizada." : "Peça adicionada ao closet.");
@@ -66,7 +79,41 @@ export function ClothingItemDialog({
     }
   }
 
-  const shownImage = preview ?? existingUrl ?? null;
+  const selectedPreview = useMemo(
+    () =>
+      originalFile
+        ? URL.createObjectURL(removeBackground && processedFile ? processedFile : originalFile)
+        : null,
+    [originalFile, processedFile, removeBackground],
+  );
+  useEffect(
+    () => () => {
+      if (selectedPreview) URL.revokeObjectURL(selectedPreview);
+    },
+    [selectedPreview],
+  );
+  const shownImage = selectedPreview ?? existingUrl ?? null;
+
+  async function selectImage(selected: File | null) {
+    setOriginalFile(selected);
+    setProcessedFile(null);
+    setProcessingError(undefined);
+    if (!selected || !removeBackground) return;
+    await processImage(selected);
+  }
+
+  async function processImage(selected: File) {
+    setProcessing(true);
+    try {
+      setProcessedFile(await removeLightBackground(selected));
+    } catch (error) {
+      setProcessingError(
+        error instanceof Error ? error.message : "Não foi possível remover o fundo.",
+      );
+    } finally {
+      setProcessing(false);
+    }
+  }
 
   return (
     <div className="overlay" onMouseDown={close}>
@@ -93,13 +140,31 @@ export function ClothingItemDialog({
               type="file"
               accept="image/*"
               hidden
-              onChange={(e) => {
-                const selected = e.target.files?.[0] ?? null;
-                setFile(selected);
-                setPreview(selected ? URL.createObjectURL(selected) : null);
-              }}
+              onChange={(e) => void selectImage(e.target.files?.[0] ?? null)}
             />
           </label>
+          {originalFile && (
+            <div className="background-removal-control">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={removeBackground}
+                  onChange={(event) => {
+                    setRemoveBackground(event.target.checked);
+                    if (event.target.checked && !processedFile) void processImage(originalFile);
+                  }}
+                />{" "}
+                Remover fundo claro automaticamente
+              </label>
+              {processing && <span>Recortando a peça…</span>}
+              {!processing && processedFile && removeBackground && (
+                <span className="processing-success">Fundo removido. Confira a prévia.</span>
+              )}
+              {processingError && removeBackground && (
+                <span className="processing-warning">{processingError}</span>
+              )}
+            </div>
+          )}
 
           <div className="field-grid">
             <Field label="Nome">
@@ -148,8 +213,8 @@ export function ClothingItemDialog({
             <textarea name="notes" rows={2} defaultValue={item?.notes ?? ""} />
           </Field>
 
-          <button className="primary full" type="submit" disabled={saving}>
-            {saving ? "Salvando..." : "Salvar peça"}
+          <button className="primary full" type="submit" disabled={saving || processing}>
+            {processing ? "Processando foto..." : saving ? "Salvando..." : "Salvar peça"}
           </button>
         </form>
       </section>
